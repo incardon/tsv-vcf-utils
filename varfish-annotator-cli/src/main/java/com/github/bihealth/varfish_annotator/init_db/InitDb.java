@@ -1,8 +1,8 @@
 package com.github.bihealth.varfish_annotator.init_db;
 
 import com.github.bihealth.varfish_annotator.VarfishAnnotatorException;
+import java.io.IOException;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
 
 /** Implementation of the <tt>init-db</tt> command. */
@@ -22,14 +22,13 @@ public final class InitDb {
   public void run() {
     System.err.println("Running init-db; args: " + args);
 
-    try (Connection conn =
-        DriverManager.getConnection(
+    try (Connection conn = null /*DriverManager.getConnection(
             "jdbc:h2:"
                 + args.getDbPath()
                 + ";TRACE_LEVEL_FILE=0;MV_STORE=FALSE;MVCC=FALSE"
                 + ";DB_CLOSE_ON_EXIT=FALSE",
             "sa",
-            "")) {
+            "")*/) {
       if (args.getGnomadExomesPaths() != null && args.getGnomadExomesPaths().size() > 0) {
         System.err.println("Importing gnomAD exomes VCF files...");
         new GnomadExomesImporter(
@@ -59,6 +58,24 @@ public final class InitDb {
                 args.getRefPath(),
                 args.getGenomicRegion())
             .run();
+      }
+      if (args.getTsvPaths() != null && args.getTsvPaths().size() > 0) {
+        try {
+          new TsvVcfFileImporter(
+                  conn,
+                  args.getRefPath(),
+                  args.getRelease(),
+                  args.getTsvPaths(),
+                  args.getVcfPaths(),
+                  args.getBedPaths(),
+                  args.getTsvColumns(),
+                  args.getVcfColums(),
+                  args.getBedColums(),
+                  args.getFormat())
+              .run();
+        } catch (IOException e) {
+          throw new VarfishAnnotatorException("Error, reading database files: ", e);
+        }
       }
       if (args.getExacPath() != null) {
         System.err.println("Importing ExAC VCF files...");

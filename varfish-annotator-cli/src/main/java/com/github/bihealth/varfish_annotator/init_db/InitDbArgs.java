@@ -74,6 +74,45 @@ public final class InitDbArgs {
   @Parameter(names = "--release", description = "The genome release used", required = true)
   private String release;
 
+  @Parameter(names = "--tsv-files", description = "A set of tsv file tables", required = false)
+  private List<String> tsvFiles;
+
+  @Parameter(names = "--format", description = "format of the tsv tables", required = false)
+  private List<String> formatTsv;
+
+  @Parameter(
+      names = "--tsv-fieldname",
+      description = "Name of the fields for each selected columns",
+      required = false)
+  private List<String> tsvFieldNames;
+
+  @Parameter(names = "--vcf-files", description = "A set of vcf file tables", required = false)
+  private List<String> vcfFiles;
+
+  @Parameter(names = "--bed-files", description = "A set of bed file tables", required = false)
+  private List<String> bedFiles;
+
+  @Parameter(
+      names = "--columns-vcf",
+      description = "Selected columns for each vcf file",
+      required = false)
+  private List<String> vcfColumnsName;
+
+  @Parameter(
+      names = "--columns-tsv",
+      description = "Selected columns for each tsv file",
+      required = false)
+  private List<String> tsvColumnsNames;
+
+  @Parameter(
+      names = "--columns-bed",
+      description = "Selected columns for each bed file",
+      required = false)
+  private List<String> bedColumnsName;
+
+  @Parameter(names = "--table-name", description = "Name of the table to create", required = false)
+  private String tableName;
+
   public boolean isHelp() {
     return help;
   }
@@ -124,6 +163,38 @@ public final class InitDbArgs {
 
   public void setRelease(String release) {
     this.release = release;
+  }
+
+  public List<String> getTsvPaths() {
+    return this.tsvFiles;
+  }
+
+  public List<String> getVcfPaths() {
+    return this.vcfFiles;
+  }
+
+  public List<String> getBedPaths() {
+    return this.bedFiles;
+  }
+
+  public List<String> getTsvColumns() {
+    return this.tsvColumnsNames;
+  }
+
+  public List<String> getVcfColums() {
+    return this.vcfColumnsName;
+  }
+
+  public List<String> getBedColums() {
+    return this.bedColumnsName;
+  }
+
+  public List<String> getFormat() {
+    return formatTsv;
+  }
+
+  public String getTableName() {
+    return this.tableName;
   }
 
   @Override
