@@ -351,6 +351,20 @@ public class TsvVcfFileImporter {
 
     BedColumnsInteger = new ArrayList<>();
     parseColumnsArgsAndCreateNodes(BedColumns, BedColumnsInteger);
+
+    percentage = new double[chr_len.length + 1];
+
+    tot_base = 0;
+    for (int i = 0; i < percentage.length - 1; i++) {
+      percentage[i] = tot_base;
+      tot_base += chr_len[i];
+    }
+    percentage[percentage.length - 1] = tot_base;
+
+    for (int i = 0; i < percentage.length - 1; i++) {
+      percentage[i] = percentage[i] / tot_base * 100.0;
+    }
+    percentage[percentage.length - 1] = 100.0;
   }
 
   /** Execute TSV file import. */
@@ -589,6 +603,32 @@ public class TsvVcfFileImporter {
     }
 
     return vr;
+  }
+
+  int chr_len[] = {
+    249250621, 243199373, 198022430, 191154276, 180915260, 171115067, 159138663, 146364022,
+    141213431, 135534747, 135006516, 133851895, 115169878, 107349540, 102531392, 90354753, 81195210,
+    78077248, 59128983, 63025520, 48129895, 51304566, 155270560, 5937356
+  };
+
+  long tot_base;
+
+  double percentage[];
+
+  double progress(String chr, int start) {
+    int chr_int = 0;
+    if (chr.equals("X")) {
+      chr_int = 22;
+    } else if (chr.equals("Y")) {
+      chr_int = 23;
+    } else if (chr.equals("MT")) {
+      chr_int = 23;
+    } else {
+      chr_int = Integer.parseInt(chr) - 1;
+    }
+
+    return percentage[chr_int]
+        + start / chr_len[chr_int] * (percentage[chr_int + 1] - percentage[chr_int]);
   }
 
   /** ParseVcf * */
@@ -964,6 +1004,8 @@ public class TsvVcfFileImporter {
 
       // }
 
+      double p_display = 0.0;
+      int nit = 0;
       while (hasNextTsvOrVcf(TsvStreams, VcfStreamsIt)) {
 
         List<VariantRowAnno> annos_data =
@@ -983,6 +1025,15 @@ public class TsvVcfFileImporter {
 
           buffer.write(row);
         }
+
+        if (nit % 100 == 0 && annos_data.size() != 0) {
+          double p = progress(annos_data.get(0).chromosome, start.value);
+          if ((p - p_display * 100) >= 0.1) {
+            p_display = p;
+            System.out.println("Progress: " + Double.toString(p_display));
+          }
+        }
+        nit++;
       }
 
       buffer.close();
