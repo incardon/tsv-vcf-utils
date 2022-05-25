@@ -1,14 +1,14 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>com.github.bihealth</groupId>
-	<artifactId>VarfishAnnotator</artifactId>
+	<groupId>com.ukb.IGSB</groupId>
+	<artifactId>TsvVcfUtils</artifactId>
 	<packaging>pom</packaging>
-	<version>0.21</version>
+	<version>0.1</version>
 
 	<name>${project.groupId}:${project.artifactId}</name>
-	<description>Variant annotation for Varfish</description>
-	<url>https://cubi-gitlab.bihealth.org/CUBI_Engineering/VarFish/varfish-annotator</url>
+	<description>Tsv and Vcf utils</description>
+	<url></url>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -27,8 +27,7 @@
 	</properties>
 
 	<modules>
-		<module>varfish-annotator-core</module>
-		<module>varfish-annotator-cli</module>
+		<module>tsv-vcf-utils-cli</module>
 	</modules>
 
 	<!-- Inherit artifact from SonaType OSS pom.xml Following this article: 
@@ -51,19 +50,19 @@
 	<!-- Developers Information for Maven Central -->
 	<developers>
 		<developer>
-			<name>Manuel Holtgrewe</name>
-			<email>Manuel.Holtgrewe@bihealth.de</email>
-			<organization>Berlin Institute of Health</organization>
-			<organizationUrl>https://www.bihealth.de</organizationUrl>
+			<name>Pietro Incardona</name>
+			<email>incardon@uni-bonn.de</email>
+			<organization>UKB</organization>
+			<organizationUrl>https://www.ukbonn.de</organizationUrl>
 		</developer>
 	</developers>
 
 
 	<!-- SCM Information for Maven Central -->
 	<scm>
-		<connection>scm:git:git@github.com:bihealth/varfish-annotator.git</connection>
-		<developerConnection>scm:git:git@github.com:bihealth/varfish-annotator.git</developerConnection>
-		<url>scm:git:git@github.com:bihealth/varfish-annotator.git</url>
+		<connection>scm:git:git@github.com:incardon/varfish-annotator.git</connection>
+		<developerConnection>scm:git:git@github.com:incardon/varfish-annotator.git</developerConnection>
+		<url>scm:git:git@github.com:incardon/varfish-annotator.git</url>
 	</scm>
 
 	<dependencies>
@@ -110,6 +109,11 @@
 			<groupId>com.google.guava</groupId>
 			<artifactId>guava</artifactId>
 			<version>${guava.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.json</groupId>
+			<artifactId>json</artifactId>
+			<version>20220320</version>
 		</dependency>
 	</dependencies>
 
@@ -232,6 +236,31 @@
 						</manifest>
 					</archive>
 				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+						<configuration>
+							<archive>
+							<manifest>
+								<mainClass>
+									com.ukb.IGSB.TsvVcfUtils.VcfTsvUtilsCli
+								</mainClass>
+							</manifest>
+							</archive>
+							<descriptorRefs>
+								<descriptorRef>jar-with-dependencies</descriptorRef>
+							</descriptorRefs>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 
 			<plugin>
