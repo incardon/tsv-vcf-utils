@@ -73,7 +73,9 @@ This tool can be used also to convert TSV into VCF files. Select all or some TSV
 
 ### VCF rewriter fixer
 
+```
 java -jar tsv-vcf-utils-cli-0.1-jar-with-dependencies.jar vcf_rewriter --vcf-in /nvme/case/input/SID106291_AID99591.cmb.func.vcf.gz --vcf-out /nvme/case/output/SID106291_AID99591.cmb.func.vcf.gz --vcf-select-rules "8|\:|[GT],8|\:|[GT]" --vcf-concat-rules "0|\:|[~],0|\:|[~]" --vcf-rewrite-cols "8,9"
+```
 
 This is an example to rewrite and fix VCF files.
 
@@ -83,8 +85,10 @@ The tool is bases on select and rewrite
 
 Rules are saparated by a ",". So here we have two rules
 
+```
 8|\:|[GT]
 8|\:|[GT]
+```
 
 Both specity the same rules and they mean select column 8 split by ":" (note we have to escape "\" the ":", because is used as separator for the Merger), and select the field with name GT
 
@@ -101,19 +105,23 @@ Mean on which column must the applied the rules. 8 and 9
 
 In summary This rewrite rule fix the position of the GT column in a vcf files. Example
 
+```
 Column 8            Column 9
 ...:AF:GT:PQ:...    ...:6.0,8.0:1/1:9.0
-
+```
 
 SAM tool require that GT is the first field if present. The ruke above will rewrite the VCF to have respecively GT and 1/1 at the beginning of column 8 and 9. The rule "8|\:|[GT]" indicate where GT is positioned in the column 8 while "0|\:|[~]" while the selected field (GT) followed by the other fields
 
 ### Score server
 
+```
 score_server --vcf-database "/nvme/IGSB/databases/vcf_database_fix.vcf.bgz"
+```
 
 This enable a score server at port 8888, based on the vcf file vcf_database_fix.vcf.bgz
 
 The server can be querried using a POST method.
 
+```
 curl -X POST 127.0.0.1:8000/query  -H "Content-Type: application/json" --data-binary "{"requests": [{"chromosome": 11, "start": 7899962},{"chromosome": 11, "start": 17895445}]}"
-
+```
