@@ -5,6 +5,7 @@ Utilities for Vcf and Tsv files
 ## Supported Operations
 
 - Merge Vcf,Tsv, or bed files together creating either a vcf or a Varfish compatible table for extra annotation
+- Vcf rewrite
 - Score server. It launch a service for explore the vcf database online using json format
 
 ## Example
