@@ -38,6 +38,16 @@ public class TsvColumnParserTest {
     } catch (TsvVcfUtilsException e) {
       throw new RuntimeException(e);
     }
+
+    Boolean t = tcp.setFormat("0");
+    Assert.assertEquals(t, true);
+
+    try {
+      String ll = tcp.getFormattedOutput(l);
+      Assert.assertEquals(ll, "five");
+    } catch (TsvVcfUtilsException e) {
+      throw new RuntimeException(e);
+    }
   }
 
   @Test
@@ -78,6 +88,14 @@ public class TsvColumnParserTest {
     } catch (TsvVcfUtilsException e) {
       throw new RuntimeException(e);
     }
+
+    tcp.setFormat("-1|AF=|0");
+    try {
+      String out = tcp.getFormattedOutput(l);
+      Assert.assertEquals(out, "AF=7.0");
+    } catch (TsvVcfUtilsException e) {
+      throw new RuntimeException(e);
+    }
   }
 
   @Test
@@ -110,6 +128,15 @@ public class TsvColumnParserTest {
     try {
       String cols = tcp.getColumns(l);
       Assert.assertEquals(cols, "five;eight;nine;");
+    } catch (TsvVcfUtilsException e) {
+      throw new RuntimeException(e);
+    }
+
+    tcp.setFormat("0|_|1|_|2");
+
+    try {
+      String col = tcp.getFormattedOutput(l);
+      Assert.assertEquals(col, "five_eight_nine");
     } catch (TsvVcfUtilsException e) {
       throw new RuntimeException(e);
     }
@@ -212,6 +239,70 @@ public class TsvColumnParserTest {
     try {
       String cols = tcp.getColumns(l);
       Assert.assertEquals(cols, "4.0;5.0;6.0;7.0;");
+    } catch (TsvVcfUtilsException e) {
+      throw new RuntimeException(e);
+    }
+
+    tcp.setFormat("-1|sev=|3|\\:fiv=|1|\\:fou=|0");
+
+    try {
+      String cols = tcp.getFormattedOutput(l);
+      Assert.assertEquals(cols, "sev=7.0:fiv=5.0:fou=4.0");
+    } catch (TsvVcfUtilsException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  @Test
+  public void check_construction_of_nodes_simplified_dynamic() {
+
+    TSVColumnParser tcp = new TSVColumnParser();
+
+    try {
+      tcp.parseSimplified("7|\\:|[GT]", new File("Not-really-used"));
+    } catch (TsvVcfUtilsException e) {
+      throw new RuntimeException(e);
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+
+    /////////////////////////////////////////////
+
+    Node n = tcp.getRoot();
+
+    // A chain of 3 nodes
+
+    Assert.assertEquals(n.id, 7);
+    Assert.assertEquals(n.delimiter, ":");
+
+    n = n.child;
+
+    Assert.assertEquals(n.id, -1);
+    Assert.assertEquals(n.search, "GT");
+
+    tcp.setFormat("0|\\:|[~]");
+
+    String line = new String("zero\tone\ttwo\tthree\tfour\tfive\tsix\tDB:GT:CT\t1:2:3");
+    String[] l = line.split("\t");
+
+    try {
+      String cols = tcp.getFormattedOutput(l);
+      Assert.assertEquals(cols, "GT:DB:CT");
+    } catch (TsvVcfUtilsException e) {
+      throw new RuntimeException(e);
+    }
+
+    String line2 = new String("zero\tone\ttwo\tthree\tfour\tfive\tsix\tDB:CT:HP:GT\t1:2:3:4");
+    String[] l2 = line2.split("\t");
+
+    try {
+      String cols = tcp.getFormattedOutput(l2);
+      Assert.assertEquals(cols, "GT:DB:CT:HP");
+
+      String cols2 = tcp.getFormattedOutput(l2, 8);
+
+      Assert.assertEquals(cols2, "4:1:2:3");
+
     } catch (TsvVcfUtilsException e) {
       throw new RuntimeException(e);
     }

@@ -11,9 +11,9 @@ public class GZIPfileOutput {
 
   Writer encoder;
 
-  GZIPfileOutput() {}
+  public GZIPfileOutput() {}
 
-  BufferedWriter open(String file) throws IOException {
+  public BufferedWriter open(String file) throws IOException {
 
     fileStream = new FileOutputStream(file);
     gzipStream =

@@ -4,5 +4,6 @@ package com.ukb.IGSB.TsvVcfUtils.core;
 public class Node {
   public Node child;
   public String delimiter;
+  public String search;
   public int id;
 }

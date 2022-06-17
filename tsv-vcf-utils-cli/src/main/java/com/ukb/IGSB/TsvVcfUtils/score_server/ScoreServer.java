@@ -32,7 +32,7 @@ public class ScoreServer {
    */
   public ScoreServer(String VcfDatabase) throws Exception, IOException {
 
-    server = HttpServer.create(new InetSocketAddress(8000), 0);
+    server = HttpServer.create(new InetSocketAddress(8888), 0);
 
     fileReader = new VCFFileReader(new File(VcfDatabase));
 
@@ -133,6 +133,8 @@ public class ScoreServer {
 
       String rep = response.toString() + "\n";
 
+      t.getResponseHeaders().set("Content-type", "application/json");
+      t.getResponseHeaders().set("Access-Control-Allow-Origin", "http://localhost:3000");
       t.sendResponseHeaders(200, rep.length());
       OutputStream os = t.getResponseBody();
       os.write(rep.toString().getBytes());

@@ -44,7 +44,10 @@ public final class InitDb {
                   args.getVcfFieldnames(),
                   args.getBedFieldnames(),
                   args.getFormat(),
-                  args.getVcfDB())
+                  args.getVcfDB(),
+                  args.getDisableExtraAnno(),
+                  args.getDisableNormalization(),
+                  args.getMapMtoMT())
               .run();
         } catch (IOException e) {
           throw new TsvVcfUtilsException("Error, reading database files: ", e);

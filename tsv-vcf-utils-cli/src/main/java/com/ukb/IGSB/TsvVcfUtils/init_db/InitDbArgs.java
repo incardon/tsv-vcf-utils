@@ -16,12 +16,6 @@ public final class InitDbArgs {
   private boolean help = false;
 
   @Parameter(
-      names = "--db-path",
-      description = "Path to H2 file to initialize/update",
-      required = true)
-  private String dbPath;
-
-  @Parameter(
       names = "--ref-path",
       description = "Path to reference FASTA file, used for variant normalization",
       required = false)
@@ -143,6 +137,18 @@ public final class InitDbArgs {
       required = false)
   private List<String> bedColumnsName;
 
+  @Parameter(names = "--disable-extra-anno", description = "Disable extra anno", required = false)
+  private boolean disableExtraAnno = false;
+
+  @Parameter(
+      names = "--disable-normalization",
+      description = "Disable variant normalization",
+      required = false)
+  private boolean disableNormalization = false;
+
+  @Parameter(names = "--map-M-to-MT", description = "Map chromosome M to MT", required = false)
+  private boolean mapMtoMT = false;
+
   @Parameter(names = "--table-name", description = "Name of the table to create", required = false)
   private String tableName;
 
@@ -152,10 +158,6 @@ public final class InitDbArgs {
 
   public String getRefPath() {
     return refPath;
-  }
-
-  public String getDbPath() {
-    return dbPath;
   }
 
   public String getExacPath() {
@@ -254,6 +256,18 @@ public final class InitDbArgs {
     return formatTsv;
   }
 
+  public Boolean getDisableExtraAnno() {
+    return disableExtraAnno;
+  }
+
+  public Boolean getDisableNormalization() {
+    return disableNormalization;
+  }
+
+  public Boolean getMapMtoMT() {
+    return mapMtoMT;
+  }
+
   public String getTableName() {
     return this.tableName;
   }
@@ -263,9 +277,6 @@ public final class InitDbArgs {
     return "InitDbArgs{"
         + "help="
         + help
-        + ", dbPath='"
-        + dbPath
-        + '\''
         + ", refPath='"
         + refPath
         + '\''
