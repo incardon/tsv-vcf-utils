@@ -1,4 +1,4 @@
-package test.com.ukb.IGSV.TsvVcfUtils.vcf_rewriter;
+package com.ukb.IGSB.TsvVcfUtils.vcf_rewriter;
 
 import com.ukb.IGSB.TsvVcfUtils.init_db.GZIPfileInput;
 import com.ukb.IGSB.TsvVcfUtils.vcf_rewriter.VcfRewriter;

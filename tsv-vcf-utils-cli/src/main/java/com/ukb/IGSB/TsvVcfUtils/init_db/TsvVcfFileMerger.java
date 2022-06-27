@@ -18,7 +18,7 @@ import htsjdk.variant.vcf.*;
 import java.io.*;
 import java.util.*;
 
-public class TsvVcfFileImporter {
+public class TsvVcfFileMerger {
 
   class VariantRow {
     public String chromosome;
@@ -152,6 +152,8 @@ public class TsvVcfFileImporter {
   /** MapM to MT * */
   Boolean mapMtoMT;
 
+  List<String> BedColumns;
+
   boolean disableNormalization;
 
   int actual_allele = 1;
@@ -183,7 +185,7 @@ public class TsvVcfFileImporter {
    *
    * @param TsvFiles Paths to TSV files
    */
-  public TsvVcfFileImporter(
+  public TsvVcfFileMerger(
       String refFastaPath,
       String release,
       List<String> TsvFiles,
@@ -205,6 +207,9 @@ public class TsvVcfFileImporter {
     this.VcfFiles = VcfFiles;
     this.BedFiles = BedFiles;
     this.TsvColumns = TsvColumns;
+    if (TsvColumns == null) {
+      this.TsvColumns = new ArrayList<>();
+    }
     this.VcfColumns = VcfColumns;
     this.refFastaPath = refFastaPath;
     this.release = release;
@@ -253,7 +258,7 @@ public class TsvVcfFileImporter {
       }
     }
 
-    if (TsvColumns.size() != TsvFiles.size()) {
+    if (this.TsvColumns.size() != this.TsvFiles.size()) {
       throw new TsvVcfUtilsException(
           "Error the you have "
               + TsvFiles.size()
@@ -265,7 +270,7 @@ public class TsvVcfFileImporter {
     }
 
     TsvColumnsInteger = new ArrayList<>();
-    for (int i = 0; i < TsvFiles.size(); i++) {
+    for (int i = 0; i < this.TsvFiles.size(); i++) {
       TsvColumnsInteger.add(new TSVColumnParser());
       TsvColumnsInteger.get(i).parse(TsvColumns.get(i), new File(TsvFiles.get(i)));
     }
@@ -294,6 +299,10 @@ public class TsvVcfFileImporter {
     valid_keywords.add("stop");
     valid_keywords.add("ref");
     valid_keywords.add("alt");
+
+    if (format == null){
+      format = new ArrayList<>();
+    }
 
     if (format.size() != this.TsvFiles.size()) {
       throw new TsvVcfUtilsException(
@@ -339,6 +348,7 @@ public class TsvVcfFileImporter {
 
     // Opening bedfiles
 
+    this.BedColumns = BedColumns;
     BedColumnsInteger = new ArrayList<>();
     for (int i = 0; i < this.BedFiles.size(); i++) {
       BedColumnsInteger.add(new TSVColumnParser());
@@ -407,7 +417,7 @@ public class TsvVcfFileImporter {
   private VariantRow getNextVariantTsv(int i, List<BufferedReader> files, StringHolder cols)
       throws IOException, TsvVcfUtilsException {
     VariantRow toReturn = lastParsedLineTsv.get(i);
-    cols.value = getTsvColumns(i);
+    cols.value = getTsvColumns(i) + ";";
 
     lastParsedLineTsv.set(i, parseTsv(i, files));
 
@@ -438,14 +448,14 @@ public class TsvVcfFileImporter {
             } else {
               // overlap
 
-              vr.anno_data += getBedColumns(i);
+              vr.anno_data += getBedColumns(i) + ";";
               break;
             }
           } else {
             if (vr.start < bed.stop) {
               // overlap
 
-              vr.anno_data += getBedColumns(i);
+              vr.anno_data += getBedColumns(i) + ";";
               break;
             } else {
               // no overlap, next interval
@@ -619,7 +629,7 @@ public class TsvVcfFileImporter {
   }
 
   String getBedColumns(int i) {
-    return lastParsedLineColumnsBed.get(i).replace(";", " ");
+    return lastParsedLineColumnsBed.get(i);
   }
 
   class StringHolder {
@@ -989,6 +999,12 @@ public class TsvVcfFileImporter {
       i++;
     }
 
+    if (BedFieldName.size() != BedColumnsInteger.size()) {
+      String bc = new String().join(",",this.BedColumns);
+      String bf = new String().join(",",this.BedFieldname);
+      throw new TsvVcfUtilsException(new String().join(",","Error for each bed-file column, there must be bed file fieldname. Columns specified (" + bc + "), Bed fieldname specified (" + bf + ")"));
+    }
+
     i = 0;
     for (String bedfname : BedFieldName) {
 
@@ -1239,7 +1255,7 @@ public class TsvVcfFileImporter {
             for (VariantRowAnno v : entry.getValue()) {
               Allele al = null;
               if (v.Alternative.equals(".")) {
-                al = Allele.create("*", false);
+                throw new TsvVcfUtilsException("Error look like some file is not normalized");
               } else {
                 al = Allele.create(v.Alternative, false);
               }
@@ -1248,7 +1264,7 @@ public class TsvVcfFileImporter {
               for (String prop : v.anno_data.split(";")) {
                 if (!prop.equals("null ")) {
 
-                  attr.put(cols_list[i], prop);
+                  attr.put(cols_list[i], prop.replace(" ","_"));
                 }
                 i++;
               }

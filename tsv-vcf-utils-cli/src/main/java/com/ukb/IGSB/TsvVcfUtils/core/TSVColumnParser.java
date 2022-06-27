@@ -356,7 +356,7 @@ public class TSVColumnParser {
       }
     }
 
-    return cols;
+    return cols.substring(0,cols.length()-1);
   }
 
   public String getNulls() {

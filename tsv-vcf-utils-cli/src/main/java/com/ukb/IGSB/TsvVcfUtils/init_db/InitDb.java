@@ -29,9 +29,9 @@ public final class InitDb {
                 + ";DB_CLOSE_ON_EXIT=FALSE",
             "sa",
             "")*/) {
-      if (args.getTsvPaths() != null && args.getTsvPaths().size() > 0) {
+      if ((args.getTsvPaths() != null && args.getTsvPaths().size() > 0) || (args.getVcfPaths() != null && args.getVcfPaths().size() > 0)) {
         try {
-          new TsvVcfFileImporter(
+          new TsvVcfFileMerger(
                   args.getRefPath(),
                   args.getRelease(),
                   args.getTsvPaths(),

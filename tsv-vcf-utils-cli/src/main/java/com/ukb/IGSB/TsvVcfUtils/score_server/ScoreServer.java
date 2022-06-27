@@ -4,7 +4,7 @@ import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 import com.ukb.IGSB.TsvVcfUtils.TsvVcfUtilsException;
-import com.ukb.IGSB.TsvVcfUtils.init_db.TsvVcfFileImporter;
+import com.ukb.IGSB.TsvVcfUtils.init_db.TsvVcfFileMerger;
 import htsjdk.samtools.util.CloseableIterator;
 import htsjdk.variant.variantcontext.Allele;
 import htsjdk.variant.variantcontext.VariantContext;
@@ -70,7 +70,7 @@ public class ScoreServer {
           JSONObject r = arr.getJSONObject(i);
 
           String chr = r.get("chromosome").toString();
-          int chr_int = TsvVcfFileImporter.getChrInteger(chr);
+          int chr_int = TsvVcfFileMerger.getChrInteger(chr);
           if (chr_int < 0) {
             throw new TsvVcfUtilsException("Invalid request");
           }
@@ -134,7 +134,7 @@ public class ScoreServer {
       String rep = response.toString() + "\n";
 
       t.getResponseHeaders().set("Content-type", "application/json");
-      t.getResponseHeaders().set("Access-Control-Allow-Origin", "http://localhost:3000");
+      t.getResponseHeaders().set("Access-Control-Allow-Origin", "http://127.0.0.1:8000");
       t.sendResponseHeaders(200, rep.length());
       OutputStream os = t.getResponseBody();
       os.write(rep.toString().getBytes());

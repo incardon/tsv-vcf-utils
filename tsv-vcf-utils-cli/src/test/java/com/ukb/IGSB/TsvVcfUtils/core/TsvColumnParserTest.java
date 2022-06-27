@@ -1,4 +1,4 @@
-package test.com.ukb.IGSV.TsvVcfUtils.core;
+package com.ukb.IGSB.TsvVcfUtils.core;
 
 import com.ukb.IGSB.TsvVcfUtils.TsvVcfUtilsException;
 import com.ukb.IGSB.TsvVcfUtils.core.Node;
@@ -34,7 +34,7 @@ public class TsvColumnParserTest {
 
     try {
       String cols = tcp.getColumns(l);
-      Assert.assertEquals(cols, "five;");
+      Assert.assertEquals(cols, "five");
     } catch (TsvVcfUtilsException e) {
       throw new RuntimeException(e);
     }
@@ -84,7 +84,7 @@ public class TsvColumnParserTest {
 
     try {
       String cols = tcp.getColumns(l);
-      Assert.assertEquals(cols, "7.0;");
+      Assert.assertEquals(cols, "7.0");
     } catch (TsvVcfUtilsException e) {
       throw new RuntimeException(e);
     }
@@ -127,7 +127,7 @@ public class TsvColumnParserTest {
 
     try {
       String cols = tcp.getColumns(l);
-      Assert.assertEquals(cols, "five;eight;nine;");
+      Assert.assertEquals(cols, "five;eight;nine");
     } catch (TsvVcfUtilsException e) {
       throw new RuntimeException(e);
     }
@@ -238,7 +238,7 @@ public class TsvColumnParserTest {
 
     try {
       String cols = tcp.getColumns(l);
-      Assert.assertEquals(cols, "4.0;5.0;6.0;7.0;");
+      Assert.assertEquals(cols, "4.0;5.0;6.0;7.0");
     } catch (TsvVcfUtilsException e) {
       throw new RuntimeException(e);
     }
@@ -336,7 +336,7 @@ public class TsvColumnParserTest {
 
     try {
       String cols = tcp.getColumns(arr);
-      Assert.assertEquals(cols, "2.0;4.0;5.0;");
+      Assert.assertEquals(cols, "2.0;4.0;5.0");
     } catch (TsvVcfUtilsException e) {
       throw new RuntimeException(e);
     }

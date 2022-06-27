@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 //import java.util.zip.BlockCompressedInputStream;
 //import java.util.zip.BlockCompressedOutputStream;
-import javax.swing.*;
+
 
 public class ChromosomeSort {
 
@@ -73,7 +73,7 @@ public class ChromosomeSort {
         if (!line.startsWith("#")) {
           String chromosome = line.split("\t")[formatInt.get(i)];
 
-          int chr = TsvVcfFileImporter.getChrInteger(chromosome) - 1;
+          int chr = TsvVcfFileMerger.getChrInteger(chromosome) - 1;
 
           if (chr >= 0) {
             n_line_processed++;
