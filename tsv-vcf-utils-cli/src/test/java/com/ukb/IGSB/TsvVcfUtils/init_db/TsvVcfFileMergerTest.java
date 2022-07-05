@@ -57,7 +57,7 @@ public class TsvVcfFileMergerTest {
         BedFieldName.add("Anno1");
 
         new TsvVcfFileMerger(
-                "test_data/human_g1k_v37.fasta",
+                "mocker",
                 "GRCh37",
                 null,
                 VcfFiles,

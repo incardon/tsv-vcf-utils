@@ -1079,7 +1079,13 @@ public class TsvVcfFileMerger {
 
       i = 0;
       for (String files : this.VcfFieldname) {
+
+        if (i >= this.VcfFiles.size()) {
+          throw new TsvVcfUtilsException("Error, we have "  + VcfFiles.size() + " VCF files, but the --vcf-fieldname defined fields for more files");
+        }
+
         for (String col : files.split(":")) {
+
           VCFInfoHeaderLine line =
               new VCFInfoHeaderLine(
                   col,

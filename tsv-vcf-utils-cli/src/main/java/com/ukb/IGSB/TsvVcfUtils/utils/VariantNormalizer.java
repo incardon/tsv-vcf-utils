@@ -19,10 +19,12 @@ import java.io.FileNotFoundException;
  */
 public final class VariantNormalizer {
 
+  boolean mocker = false;
+
   /** Path to indexed FASTA path to use */
-  final String fastaPath;
+  String fastaPath;
   /** Random access in FASTA files using FAI */
-  final IndexedFastaSequenceFile fai;
+  IndexedFastaSequenceFile fai;
 
   /**
    * Construct new variant normalizer object
@@ -31,6 +33,9 @@ public final class VariantNormalizer {
    * @throws VarfishAnnotatorException On problems with opening the FASTA/FAI file
    */
   public VariantNormalizer(String fastaPath) throws Exception {
+
+    if (fastaPath.equals("mocker")) {return;}
+
     this.fastaPath = fastaPath;
     try {
       this.fai = new IndexedFastaSequenceFile(new File(fastaPath));
@@ -46,6 +51,8 @@ public final class VariantNormalizer {
    * are given as sequence.
    */
   public VariantDescription normalizeVariant(VariantDescription desc) {
+    if (mocker == true) {return desc;}
+
     final VariantDescription shifted = shiftLeft(desc);
     return trimBasesLeft(shifted, 0);
   }
@@ -59,11 +66,15 @@ public final class VariantNormalizer {
    * are given as sequence.
    */
   public VariantDescription normalizeInsertion(VariantDescription desc) {
+    if (mocker == true) {return desc;}
+
     final VariantDescription shifted = shiftLeft(desc);
     return trimBasesLeft(shifted, 1);
   }
 
   private VariantDescription shiftLeft(VariantDescription desc) {
+    if (mocker == true) {return desc;}
+
     int start = desc.getPos();
     String ref = desc.getRef();
     String alt = desc.getAlt();
@@ -94,6 +105,8 @@ public final class VariantNormalizer {
   }
 
   private VariantDescription trimBasesLeft(VariantDescription desc, int minSize) {
+    if (mocker == true) {return desc;}
+
     int start = desc.getPos();
     String ref = desc.getRef();
     String alt = desc.getAlt();
