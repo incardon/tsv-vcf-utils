@@ -51,7 +51,7 @@ public class VcfRewriterTest {
     try {
       VcfRewriter r =
           new VcfRewriter(
-              "test_data/rewrite_in.vcf.gz", "rewrite_out.vcf.gz", select, concat, to_rewrite);
+              "test_data/rewrite_in.vcf.gz", "rewrite_out.vcf.gz", select, concat, to_rewrite,false);
 
       r.run();
 
@@ -89,7 +89,8 @@ public class VcfRewriterTest {
               "rewrite_out_dynamic.vcf.bgz",
               select,
               concat,
-              rewrite);
+              rewrite,
+                  false);
 
       r.run();
 

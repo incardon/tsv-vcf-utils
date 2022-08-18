@@ -27,6 +27,9 @@ public class VcfRewriteArgs {
   @Parameter(names = "--vcf-out", description = "Vcf to write")
   private String VcfOUT;
 
+  @Parameter(names = "--dp-ao-ad", description = "Activate  the conversion of DP, AO into AD")
+  private boolean dp_ao_ad = false;
+
   public List<String> getVcfSelects() {
     return selects;
   }
@@ -37,6 +40,10 @@ public class VcfRewriteArgs {
 
   public List<Integer> getVcfRewrite() {
     return rewrite;
+  }
+
+  public Boolean getDPAOAD() {
+    return dp_ao_ad;
   }
 
   public String getVcfIN() {

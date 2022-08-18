@@ -5,8 +5,7 @@ import com.ukb.IGSB.TsvVcfUtils.core.TSVColumnParser;
 import com.ukb.IGSB.TsvVcfUtils.init_db.GZIPfileInput;
 import com.ukb.IGSB.TsvVcfUtils.init_db.GZIPfileOutput;
 import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class VcfRewriter {
 
@@ -15,6 +14,8 @@ public class VcfRewriter {
 
   List<TSVColumnParser> prs;
   List<Integer> to_rewrite;
+
+  Boolean dp_ao_ad;
 
   /**
    * Start a vcf database HTTP server
@@ -27,7 +28,8 @@ public class VcfRewriter {
       String VcfOUT,
       List<String> select,
       List<String> concat,
-      List<Integer> to_rewrite)
+      List<Integer> to_rewrite,
+      Boolean dp_ao_ad)
       throws Exception, IOException {
 
     this.VcfIN = VcfIN;
@@ -60,6 +62,7 @@ public class VcfRewriter {
     }
 
     this.to_rewrite = to_rewrite;
+    this.dp_ao_ad = dp_ao_ad;
   }
 
   private int is_cols_to_rewrite(int i) {
@@ -70,6 +73,19 @@ public class VcfRewriter {
       }
     }
     return -1;
+  }
+
+  private String remove_element(String str, int ele) {
+
+    if (ele == -1) {
+      return str;
+    }
+
+    List eles = new LinkedList<String>(Arrays.asList(str.split(":")));
+
+    eles.remove(ele);
+
+    return String.join(":", eles);
   }
 
   /** Execute TSV file import. */
@@ -90,20 +106,87 @@ public class VcfRewriter {
       String rebuils_line = new String();
       String[] list_split = line.split("\t");
 
-      for (int i = 0; i < list_split.length; i++) {
-        int cr = is_cols_to_rewrite(i);
-        if (cr >= 0) {
-          rebuils_line += prs.get(cr).getFormattedOutput(list_split, i);
-        } else {
-          if (i == 7) {
-            list_split[i] = list_split[i].replace(" ", "_");
+      TSVColumnParser gt_parser = new TSVColumnParser();
+      TSVColumnParser dp_parser = new TSVColumnParser();
+      TSVColumnParser ao_parser = new TSVColumnParser();
+      TSVColumnParser ad_parser = new TSVColumnParser();
+      gt_parser.parseSimplified("8|\\:|[GT]", new File("Not-really-used"));
+      gt_parser.setFormat("0");
+      dp_parser.parseSimplified("8|\\:|[DP]", new File("Not-really-used"));
+      dp_parser.setFormat("0");
+      ao_parser.parseSimplified("8|\\:|[AO]",new File("Not-really-used"));
+      ao_parser.setFormat("0");
+      ad_parser.parseSimplified("8|\\:|[AD]",new File("Not-really-used"));
+      ad_parser.setFormat("0");
+
+      if (dp_ao_ad == true) {
+        String gt = gt_parser.getFormattedOutput(list_split,9);
+        int dp = Integer.parseInt(dp_parser.getFormattedOutput(list_split,9));
+        int ao = Integer.parseInt(ao_parser.getFormattedOutput(list_split, 9));
+        String ad = ad_parser.getFormattedOutput(list_split,9);
+
+        int gt_position = gt_parser.getRoot().child.id;
+        int dp_position = dp_parser.getRoot().child.id;
+        int ao_position = ao_parser.getRoot().child.id;
+        int ad_position = ad_parser.getRoot().child.id;
+
+        String rest = new String(list_split[8]);
+        String rest_data = new String(list_split[9]);
+
+        List<Integer> lList = new ArrayList<Integer>();
+
+        lList.add(gt_position);
+        lList.add(dp_position);
+        lList.add(ao_position);
+        lList.add(ad_position);
+
+        Collections.sort(lList, Collections.reverseOrder());
+
+        rest = remove_element(rest,lList.get(0));
+        rest_data = remove_element(rest_data,lList.get(0));
+        rest = remove_element(rest,lList.get(1));
+        rest_data = remove_element(rest_data,lList.get(1));
+        rest = remove_element(rest,lList.get(2));
+        rest_data = remove_element(rest_data,lList.get(2));
+        rest = remove_element(rest,lList.get(3));
+        rest_data = remove_element(rest_data,lList.get(3));
+
+        for (int i = 0; i < list_split.length; i++) {
+
+          if (i == 8) {
+            rebuils_line += new String("GT:DP:AO:AD:" + rest);
+          }
+          else if (i == 9) {
+            rebuils_line += new String(gt + ":" + Integer.toString(dp) + ":" + Integer.toString(ao) + ":" + Integer.toString(dp-ao) + "," + Integer.toString(ao) + ":" + rest_data);
+          } else {
+            rebuils_line += list_split[i];
           }
 
-          rebuils_line += list_split[i];
+          if (i != list_split.length - 1) {
+            rebuils_line += "\t";
+          }
+
         }
 
-        if (i != list_split.length - 1) {
-          rebuils_line += "\t";
+      }
+      else {
+
+        for (int i = 0; i < list_split.length; i++) {
+
+          int cr = is_cols_to_rewrite(i);
+          if (cr >= 0) {
+            rebuils_line += prs.get(cr).getFormattedOutput(list_split, i);
+          } else {
+            if (i == 7) {
+              list_split[i] = list_split[i].replace(" ", "_");
+            }
+
+            rebuils_line += list_split[i];
+          }
+
+          if (i != list_split.length - 1) {
+            rebuils_line += "\t";
+          }
         }
       }
 

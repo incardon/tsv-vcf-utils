@@ -67,7 +67,8 @@ public class VcfTsvUtilsCli {
                   vcfRewrite.getVcfOUT(),
                   vcfRewrite.getVcfSelects(),
                   vcfRewrite.getVcfConcats(),
-                  vcfRewrite.getVcfRewrite())
+                  vcfRewrite.getVcfRewrite(),
+                  vcfRewrite.getDPAOAD())
               .run();
         }
         break;

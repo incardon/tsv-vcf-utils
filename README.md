@@ -81,29 +81,33 @@ This is an example to rewrite and fix VCF files.
 
 The tool is bases on select and rewrite
 
---vcf-select-rules specify the select rules
+--vcf-select-rules specify the rules to select columns or fields
 
-Rules are saparated by a ",". So here we have two rules
+Rules are saparated by a ",". So in the example  "8|\:|[GT],8|\:|[GT]" we have two rules
 
 ```
 8|\:|[GT]
 8|\:|[GT]
 ```
 
-Both specity the same rules and they mean select column 8 split by ":" (note we have to escape "\" the ":", because is used as separator for the Merger), and select the field with name GT
+Both specity the same rules and they mean select column 8 split by ":" (note the backslash to escape ":"), and select the field with name GT
 
 --vcf-concat-rules
 
-Indicate rewrite rules by concatenation. We have two selections so we have two rewrite rules
+Indicate how to rewrite by concatenation.
 
-0 mean what has been selected by the rule 0 + ":" + all the rest of the fields [~] not selected.
+0 mean what has been selected by the rule 0 concatenate (":") with the rest of the fields ([~]) not selected.
 
 --vcf-rewrite-cols "8,9"
 
-Mean on which column must the applied the rules. 8 and 9
+Mean which column the two rewrite rule rewrite. 8 and 9
 
 
-In summary This rewrite rule fix the position of the GT column in a vcf files. Example
+In summary This rewrite rule fix the position of the GT column in a vcf file.
+
+Another option is
+
+--dp-ao-ad. This option infer ad from dp and ao field
 
 ```
 Column 8            Column 9
